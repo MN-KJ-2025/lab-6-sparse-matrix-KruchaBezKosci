@@ -37,7 +37,6 @@ def is_diagonally_dominant(A: np.ndarray | sp.sparse.csc_array) -> bool | None:
     if A.shape[0] != A.shape[1]:
         return None
 
-    # 3. Obliczenia
     abs_A = np.abs(A)
     diag_vals = np.abs(np.diagonal(A)) 
     
