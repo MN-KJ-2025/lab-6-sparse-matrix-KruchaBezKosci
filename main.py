@@ -23,8 +23,28 @@ def is_diagonally_dominant(A: np.ndarray | sp.sparse.csc_array) -> bool | None:
             w przeciwnym wypadku `False`.
         Jeżeli dane wejściowe są niepoprawne funkcja zwraca `None`.
     """
-    pass
+    
+    if not isinstance(A, (np.ndarray, sp.sparse.csc_array, sp.sparse.csr_array)):
+        return None
 
+    if sp.sparse.issparse(A):
+        A = A.toarray()
+
+    if A.ndim != 2:
+        return None
+    if A.size == 0:
+        return None
+    if A.shape[0] != A.shape[1]:
+        return None
+
+    # 3. Obliczenia
+    abs_A = np.abs(A)
+    diag_vals = np.abs(np.diagonal(A)) 
+    
+    row_sums = np.sum(abs_A, axis=1)
+    off_diag_sums = row_sums - diag_vals
+
+    return bool(np.all(diag_vals > off_diag_sums))
 
 def residual_norm(A: np.ndarray, x: np.ndarray, b: np.ndarray) -> float | None:
     """Funkcja obliczająca normę residuum dla równania postaci: 
@@ -40,4 +60,18 @@ def residual_norm(A: np.ndarray, x: np.ndarray, b: np.ndarray) -> float | None:
         (float): Wartość normy residuum dla podanych parametrów.
         Jeżeli dane wejściowe są niepoprawne funkcja zwraca `None`.
     """
-    pass
+    if not isinstance(A, np.ndarray) or not isinstance(x, np.ndarray) or not isinstance(b, np.ndarray):
+        return None
+    
+    if A.ndim != 2 or x.ndim != 1 or b.ndim != 1:
+        return None
+    
+    if A.shape[0] != b.shape[0]:
+        return None
+        
+    if A.shape[1] != x.shape[0]:
+        return None
+    r = A @ x - b
+    return np.linalg.norm(r)
+    
+
